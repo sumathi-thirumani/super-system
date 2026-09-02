@@ -1,0 +1,135 @@
+version: "3.6"
+services:
+  web:
+    image: "${COMPOSE_PROJECT_NAME}-web"
+    environment:
+      - API_URL=${API_URL}
+      - USE_SELF_SIGNED_SSL=${USE_SELF_SIGNED_SSL}
+      - WEB_BASE_HREF=${WEB_BASE_HREF}
+      - PUBLIC_URL=${PUBLIC_URL}
+      - IpFilterRules=${IpFilterRules}
+      - RealIpFrom=${RealIpFrom}
+    ports:
+      - "${WEB_HTTP_PORT}:8080"
+    depends_on:
+      - api
+  #
+  # api
+  #-------------------------------------------------
+  # The API performs the migrations on the database.
+  # Therefore, it needs to come up after the database
+  # has had time to fully initialize.
+  #
+  # We are using a simple sleep command to do this
+  # for the moment; refer to the `command` section
+  # of the configuration for details.  It would be
+  # nice to implement a more deterministic solution.
+  #
+  api:
+    image: "${COMPOSE_PROJECT_NAME}-api"
+    environment:
+      - DATABASE_SERVICE_NAME=${DATABASE_SERVICE_NAME}      
+      - DATABASE_ENGINE=${DATABASE_ENGINE}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DB_SERVICE_HOST=${DATABASE_SERVICE_NAME}
+      - DB_SERVICE_PORT=5432
+      - OIDC_RP_PROVIDER_URL=${OIDC_RP_PROVIDER_URL}
+      - OIDC_RP_PROVIDER_REALM=${OIDC_RP_PROVIDER_REALM}
+      - OIDC_RP_CLIENT_ID=${OIDC_RP_CLIENT_ID}
+      - OIDC_RP_CLIENT_SECRET=${OIDC_RP_CLIENT_SECRET}
+      - OIDC_RP_KC_IDP_HINT=${OIDC_RP_KC_IDP_HINT}
+      - DEFAULT_BASE_URL=${DEFAULT_BASE_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DATA_SECURITY_KEY=${DATA_SECURITY_KEY}
+      - URL_SCHEME=${URL_SCHEME}
+      - JC_INTERFACE_API_LOCATION_URL=${JC_INTERFACE_API_LOCATION_URL}
+      - JC_INTERFACE_API_FILE_URL=${JC_INTERFACE_API_FILE_URL}
+      - JC_INTERFACE_API_USERNAME=${JC_INTERFACE_API_USERNAME}
+      - JC_INTERFACE_API_PASSWORD=${JC_INTERFACE_API_PASSWORD}
+      - JC_INTERFACE_API_FILE_USERNAME=${JC_INTERFACE_API_FILE_USERNAME}
+      - JC_INTERFACE_API_FILE_PASSWORD=${JC_INTERFACE_API_FILE_PASSWORD}
+      - JC_INTERFACE_FILE_AGENCY_ID=${JC_INTERFACE_FILE_AGENCY_ID}
+      - JC_INTERFACE_FILE_PART_ID=${JC_INTERFACE_FILE_PART_ID}
+      - GOOGLE_MAP_URL=${GOOGLE_MAP_URL}
+      - OPENROAD_MAP_URL=${OPENROAD_MAP_URL}
+      - CHES_AUTH_URL=${CHES_AUTH_URL}
+      - CHES_EMAIL_URL=${CHES_EMAIL_URL}
+      - EMAIL_SERVICE_CLIENT_ID=${EMAIL_SERVICE_CLIENT_ID}
+      - EMAIL_SERVICE_CLIENT_SECRET=${EMAIL_SERVICE_CLIENT_SECRET}
+      - RECIPIENT_EMAILS=${RECIPIENT_EMAILS}
+      - EFILING_HUB_API_BASE_URL=${EFILING_HUB_API_BASE_URL}
+      - EFILING_HUB_KEYCLOAK_CLIENT_ID=${EFILING_HUB_KEYCLOAK_CLIENT_ID}
+      - EFILING_HUB_KEYCLOAK_BASE_URL=${EFILING_HUB_KEYCLOAK_BASE_URL}
+      - EFILING_HUB_KEYCLOAK_SECRET=${EFILING_HUB_KEYCLOAK_SECRET}
+      - EFILING_HUB_KEYCLOAK_REALM=${EFILING_HUB_KEYCLOAK_REALM}
+      - PDF_SERVICE_URL=${PDF_SERVICE_URL}
+      - ADM_RECIPIENT_EMAILS=${ADM_RECIPIENT_EMAILS}
+      - APP_RUN_IN_DOCKER=${APP_RUN_IN_DOCKER}
+      
+    volumes:
+      - ../api/api:/opt/app-root/src/api
+    ports:
+      - "${API_HTTP_PORT}:8080"
+    depends_on:
+      - db
+    command: >
+      /bin/bash -c "
+        echo Waiting for the database service to start up ...;
+        sleep 10;
+        alembic upgrade head;
+        /usr/libexec/s2i/run;"
+
+  #
+  # schema-spy
+  #-------------------------------------------------
+  # Needs to wait for the schema to be created/migrated
+  # by the API server; it's not enough to wait for the
+  # database to be available.
+  #
+  # We are using a simple sleep command to do this
+  # for the moment; refer to the `command` section
+  # of the configuration for details.  It would be
+  # nice to implement a more deterministic solution.
+  #
+  schema-spy:
+    image: schema-spy
+    environment:
+      - DATABASE_SERVICE_NAME=${DATABASE_SERVICE_NAME}
+      - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE}
+      - POSTGRESQL_USER=${POSTGRESQL_USER}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+    ports:
+      - 8082:8080
+    depends_on:
+      - db
+    command: >
+      /bin/sh -c "
+        echo sleeping ...;
+        sleep 20;
+        ./start.sh;"
+
+  #
+  # db
+  #
+  db:
+    image: centos/postgresql-12-centos7
+    environment:
+      - POSTGRESQL_USER=${POSTGRESQL_USER}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE}
+      - POSTGRESQL_ADMIN_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/pgsql/data
+
+  pdf:
+    image: bcgovimages/weasyprint
+    ports:
+      - 8083:5001
+
+volumes:
+  data:
+    driver: local
