@@ -11,5 +11,30 @@
   },
   "pip_requirements": {
     "enabled": false
-  }
+  },
+  "packageRules": [
+    {
+      "description": "Group Vue 2 and Vuetify 2 dependencies",
+      "matchPackageNames": [
+        "vue",
+        "vue-template-compiler",
+        "vue-router",
+        "vuex",
+        "vue-class-component",
+        "vue-property-decorator",
+        "vuex-class",
+        "vuex-module-decorators",
+        "vuetify",
+        "vue-cli-plugin-vuetify"
+      ],
+      "groupName": "Vue 2 / Vuetify 2"
+    },
+    {
+      "description": "Prevent accidental Vuetify 3 migration",
+      "matchPackageNames": [
+        "vuetify"
+      ],
+      "allowedVersions": "<3"
+    }
+  ]
 }
