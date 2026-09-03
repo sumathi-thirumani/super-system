@@ -5,8 +5,8 @@
     "github>bcgov/renovate-config"
   ],
   "pip-compile": {
-    "fileMatch": [
-      "/(^|/)requirements\\.in$/"
+    "managerFilePatterns": [
+      "//(^|/)requirements\\.in$//"
     ]
   },
   "pip_requirements": {
