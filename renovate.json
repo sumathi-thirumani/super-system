@@ -29,28 +29,5 @@
       ],
       "groupName": "Vue / Vuetify"
     }
-  ],
-  "vulnerabilityAlerts": {
-    "enabled": true,
-    "packageRules": [
-      {
-        "description": "Group Vue and Vuetify security upgrades",
-        "matchPackageNames": [
-          "vue",
-          "vuetify",
-          "vue-template-compiler",
-          "vue-router",
-          "vuex",
-          "vue-class-component",
-          "vue-property-decorator",
-          "vuex-class",
-          "vuex-module-decorators",
-          "vue-cli-plugin-vuetify"
-        ],
-        "groupName": "Vue / Vuetify security",
-        "groupSlug": "vue-vuetify-security",
-        "separateMajorMinor": false
-      }
-    ]
-  }
+  ]
 }
