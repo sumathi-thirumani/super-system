@@ -34,7 +34,7 @@
     "enabled": true,
     "packageRules": [
       {
-        "description": "Group Vue and Vuetify security updates",
+        "description": "Group Vue and Vuetify security upgrades",
         "matchPackageNames": [
           "vue",
           "vuetify",
@@ -47,7 +47,9 @@
           "vuex-module-decorators",
           "vue-cli-plugin-vuetify"
         ],
-        "groupName": "Vue / Vuetify security"
+        "groupName": "Vue / Vuetify security",
+        "groupSlug": "vue-vuetify-security",
+        "separateMajorMinor": false
       }
     ]
   }
