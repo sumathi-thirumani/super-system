@@ -14,9 +14,10 @@
   },
   "packageRules": [
     {
-      "description": "Group Vue 2 and Vuetify 2 dependencies",
+      "description": "Group Vue and Vuetify upgrades",
       "matchPackageNames": [
         "vue",
+        "vuetify",
         "vue-template-compiler",
         "vue-router",
         "vuex",
@@ -24,17 +25,9 @@
         "vue-property-decorator",
         "vuex-class",
         "vuex-module-decorators",
-        "vuetify",
         "vue-cli-plugin-vuetify"
       ],
-      "groupName": "Vue 2 / Vuetify 2"
-    },
-    {
-      "description": "Prevent accidental Vuetify 3 migration",
-      "matchPackageNames": [
-        "vuetify"
-      ],
-      "allowedVersions": "<3"
+      "groupName": "Vue / Vuetify"
     }
   ]
 }
