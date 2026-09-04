@@ -22,7 +22,7 @@
     "@types/underscore": "^1.11.4",
     "ace-builds": "^1.9.6",
     "axios": "^0.28.0",
-    "axios-auth-refresh": "^3.3.6",
+    "axios-auth-refresh": "^5.0.0",
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.24.0",
