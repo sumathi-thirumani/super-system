@@ -14,6 +14,13 @@
   },
   "packageRules": [
     {
+      "description": "Regenerate npm lockfiles consistently",
+      "matchManagers": ["npm"],
+      "postUpdateOptions": [
+        "npmInstallTwice"
+      ]
+    },
+    {
       "description": "Group Vue and Vuetify upgrades",
       "matchPackageNames": [
         "vue",
