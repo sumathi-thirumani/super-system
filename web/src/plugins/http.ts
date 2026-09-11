@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AxiosError , AxiosRequestConfig } from 'axios'
+import { AxiosError , InternalAxiosRequestConfig } from 'axios'
 import Vue from 'vue'
 import store from "@/store";
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
@@ -26,7 +26,7 @@ const options: AxiosAuthRefreshOptions = {
     statusCodes: [ 401, 403]
 }
 
-async function successInterceptor(config: AxiosRequestConfig) {
+async function successInterceptor(config: InternalAxiosRequestConfig) {
     const tokenExpiry = store.state.Common?.tokenExpiry;
     if (tokenExpiry && new Date() > new Date(tokenExpiry)) {
         console.log("Token expired. Refreshing...");

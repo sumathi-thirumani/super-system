@@ -19,5 +19,7 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/no-empty-function": "off",
+    "no-mixed-spaces-and-tabs": "off",
+    "no-useless-escape": "off",
   },
 };
